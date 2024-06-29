@@ -1,11 +1,13 @@
 import { type Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
-import { formatDate } from '@/lib/utils'
 import { getSharedChat } from '@/app/actions'
+import { auth } from '@/auth'
 import { ChatList } from '@/components/chat-list'
 import { FooterText } from '@/components/footer'
 import { AI, UIState, getUIStateFromAIState } from '@/lib/chat/actions'
+import { Session } from '@/lib/types'
+import { formatDate } from '@/lib/utils'
 
 export const runtime = 'edge'
 export const preferredRegion = 'home'
@@ -27,6 +29,12 @@ export async function generateMetadata({
 }
 
 export default async function SharePage({ params }: SharePageProps) {
+  const session = (await auth()) as Session
+
+  if (!session) {
+    redirect('/login')
+  }
+
   const chat = await getSharedChat(params.id)
 
   if (!chat || !chat?.sharePath) {
