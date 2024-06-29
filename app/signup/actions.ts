@@ -2,10 +2,10 @@
 
 import { signIn } from '@/auth'
 import { ResultCode, getStringFromBuffer } from '@/lib/utils'
-import { z } from 'zod'
 import { kv } from '@vercel/kv'
-import { getUser } from '../login/actions'
 import { AuthError } from 'next-auth'
+import { z } from 'zod'
+import { getUser } from '../login/actions'
 
 export async function createUser(
   email: string,
@@ -50,7 +50,12 @@ export async function signup(
 
   const parsedCredentials = z
     .object({
-      email: z.string().email(),
+      email: z
+        .string()
+        .email()
+        .refine(email => email.endsWith('@asset-projects.com'), {
+          message: 'アカウントを作成できません'
+        }),
       password: z.string().min(6)
     })
     .safeParse({
@@ -103,6 +108,7 @@ export async function signup(
       }
     }
   } else {
+    console.log('Invalid credentials:', parsedCredentials.error.errors)
     return {
       type: 'error',
       resultCode: ResultCode.InvalidCredentials
