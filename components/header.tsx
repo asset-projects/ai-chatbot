@@ -1,20 +1,17 @@
-import * as React from 'react'
 import Link from 'next/link'
+import * as React from 'react'
 
-import { cn } from '@/lib/utils'
 import { auth } from '@/auth'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
-  IconGitHub,
   IconNextChat,
-  IconSeparator,
-  IconVercel
+  IconSeparator
 } from '@/components/ui/icons'
 import { UserMenu } from '@/components/user-menu'
+import { Session } from '@/lib/types'
+import { ChatHistory } from './chat-history'
 import { SidebarMobile } from './sidebar-mobile'
 import { SidebarToggle } from './sidebar-toggle'
-import { ChatHistory } from './chat-history'
-import { Session } from '@/lib/types'
 
 async function UserOrLogin() {
   const session = (await auth()) as Session
@@ -56,7 +53,7 @@ export function Header() {
         </React.Suspense>
       </div>
       <div className="flex items-center justify-end space-x-2">
-        <a
+        {/* <a
           target="_blank"
           href="https://github.com/vercel/nextjs-ai-chatbot/"
           rel="noopener noreferrer"
@@ -73,7 +70,7 @@ export function Header() {
           <IconVercel className="mr-2" />
           <span className="hidden sm:block">Deploy to Vercel</span>
           <span className="sm:hidden">Deploy</span>
-        </a>
+        </a> */}
       </div>
     </header>
   )
