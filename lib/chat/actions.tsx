@@ -1,40 +1,40 @@
 import 'server-only'
 
+import { openai } from '@ai-sdk/openai'
 import {
   createAI,
   createStreamableUI,
-  getMutableAIState,
+  createStreamableValue,
   getAIState,
-  streamUI,
-  createStreamableValue
+  getMutableAIState,
+  streamUI
 } from 'ai/rsc'
-import { openai } from '@ai-sdk/openai'
 
 import {
-  spinner,
   BotCard,
   BotMessage,
-  SystemMessage,
+  Purchase,
+  spinner,
   Stock,
-  Purchase
+  SystemMessage
 } from '@/components/stocks'
 
-import { z } from 'zod'
-import { EventsSkeleton } from '@/components/stocks/events-skeleton'
+import { saveChat } from '@/app/actions'
+import { auth } from '@/auth'
 import { Events } from '@/components/stocks/events'
-import { StocksSkeleton } from '@/components/stocks/stocks-skeleton'
-import { Stocks } from '@/components/stocks/stocks'
+import { EventsSkeleton } from '@/components/stocks/events-skeleton'
+import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { StockSkeleton } from '@/components/stocks/stock-skeleton'
+import { Stocks } from '@/components/stocks/stocks'
+import { StocksSkeleton } from '@/components/stocks/stocks-skeleton'
+import { Chat, Message } from '@/lib/types'
 import {
   formatNumber,
+  nanoid,
   runAsyncFnWithoutBlocking,
-  sleep,
-  nanoid
+  sleep
 } from '@/lib/utils'
-import { saveChat } from '@/app/actions'
-import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
-import { Chat, Message } from '@/lib/types'
-import { auth } from '@/auth'
+import { z } from 'zod'
 
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
@@ -127,7 +127,7 @@ async function submitUserMessage(content: string) {
   let textNode: undefined | React.ReactNode
 
   const result = await streamUI({
-    model: openai('gpt-3.5-turbo'),
+    model: openai('gpt-4o-mini'),
     initial: <SpinnerMessage />,
     system: `\
     You are a stock trading conversation bot and you can help users buy stocks, step by step.
