@@ -2,10 +2,10 @@
 
 import { signIn } from '@/auth'
 import { User } from '@/lib/types'
+import { ResultCode } from '@/lib/utils'
+import { kv } from '@vercel/kv'
 import { AuthError } from 'next-auth'
 import { z } from 'zod'
-import { kv } from '@vercel/kv'
-import { ResultCode } from '@/lib/utils'
 
 export async function getUser(email: string) {
   const user = await kv.hgetall<User>(`user:${email}`)
@@ -27,7 +27,9 @@ export async function authenticate(
 
     const parsedCredentials = z
       .object({
-        email: z.string().email(),
+        email: z.string().email().refine(email => email.endsWith('@asset-projects.com'), {
+          message: 'Invalid email domain'
+        }),
         password: z.string().min(6)
       })
       .safeParse({
