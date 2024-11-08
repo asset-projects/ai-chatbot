@@ -7,7 +7,12 @@ import { createUser, getUser } from "@/db/queries";
 import { signIn } from "./auth";
 
 const authFormSchema = z.object({
-  email: z.string().email(),
+  email: z
+  .string()
+  .email()
+  .refine((email) => email.endsWith("@asset-projects.com"), {
+    message: "Invalid email domain",
+  }),
   password: z.string().min(6),
 });
 
